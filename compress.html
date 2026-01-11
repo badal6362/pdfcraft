@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Compress PDF</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Compress PDF</h1>
+
+    <p style="font-size:14px;color:#666;">
+      Upload 1 PDF (Max 10 MB)
+    </p>
+
+    <input type="file" id="pdfInput" accept="application/pdf" />
+    <br /><br />
+
+    <label for="level">Compression level:</label>
+    <br />
+    <select id="level">
+      <option value="low">Low (Best quality)</option>
+      <option value="medium" selected>Medium (Recommended)</option>
+      <option value="high">High (Smallest size)</option>
+    </select>
+
+    <br /><br />
+
+    <button id="compressBtn" onclick="compressPdf()">Compress PDF</button>
+
+    <p id="status" style="display:none;">Compressing PDF...</p>
+
+    <br />
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <script>
+    async function compressPdf() {
+      const input = document.getElementById("pdfInput");
+      const level = document.getElementById("level").value;
+      const button = document.getElementById("compressBtn");
+      const status = document.getElementById("status");
+
+      if (input.files.length !== 1) {
+        alert("Please select exactly one PDF");
+        return;
+      }
+
+      const file = input.files[0];
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File must be under 10 MB");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("pdf", file);
+      formData.append("level", level);
+
+      button.disabled = true;
+      button.innerText = "Compressing...";
+      status.style.display = "block";
+
+      try {
+        const response = await fetch("https://pdfcraft-backend-production.up.railway.app/compress", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error("Compression failed");
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "compressed.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+
+      } catch (err) {
+        alert(err.message);
+      }
+
+      button.disabled = false;
+      button.innerText = "Compress PDF";
+      status.style.display = "none";
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
