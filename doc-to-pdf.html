@@ -1,46 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Merge PDF Online Free – PDFCraft</title>
+  <title>DOC to PDF Converter – Free & Secure | PDFCraft</title>
 
   <!-- SEO -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Merge PDF files online for free. Combine multiple PDFs into one document securely with PDFCraft. No signup required.">
-  <meta name="keywords" content="merge pdf, combine pdf online, free pdf merger">
+  <meta name="description" content="Convert Word documents (DOC, DOCX) to PDF online for free. Secure and fast DOC to PDF converter.">
+  <meta name="keywords" content="doc to pdf, word to pdf, convert docx to pdf">
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <div class="nav-container">
     <div class="logo">PDFCraft</div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
+      <a href="merge.html">Merge</a>
       <a href="compress.html">Compress</a>
       <a href="split.html">Split</a>
-      <a href="doc-to-pdf.html">Convert</a>
     </nav>
   </div>
 </header>
 
-<!-- TOOL -->
 <section class="tool-page">
   <div class="tool-card-advanced">
 
-    <div class="tool-icon">📎</div>
+    <div class="tool-icon">📄</div>
 
-    <h1>Merge PDF</h1>
-    <p>Combine multiple PDF files into one secure document</p>
+    <h1>DOC to PDF</h1>
+    <p>Convert Word documents into PDF format</p>
 
-    <input type="file" id="pdfInput" multiple accept="application/pdf">
+    <input type="file" id="doc" accept=".doc,.docx">
 
-    <button id="mergeBtn" onclick="mergePdf()">Merge PDFs</button>
+    <button id="btn" onclick="convertDoc()">Convert to PDF</button>
 
     <div id="status" class="processing-text" style="display:none;">
-      Processing your files…
+      Converting document…
     </div>
 
     <div class="security-note">
@@ -53,7 +51,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-bottom">
     © 2026 PDFCraft • Free Online PDF Tools
@@ -63,34 +60,34 @@
 <script>
 const API_BASE = "https://pdfcraft-backend-production.up.railway.app";
 
-async function mergePdf() {
-  const input = document.getElementById("pdfInput");
+async function convertDoc() {
+  const doc = document.getElementById("doc").files[0];
   const status = document.getElementById("status");
-  const btn = document.getElementById("mergeBtn");
+  const btn = document.getElementById("btn");
 
-  if (input.files.length < 2) {
-    alert("Please select at least 2 PDF files");
+  if (!doc) {
+    alert("Please select a DOC or DOCX file");
     return;
   }
 
   const fd = new FormData();
-  for (const f of input.files) fd.append("pdfs", f);
+  fd.append("doc", doc);
 
   btn.disabled = true;
   status.style.display = "block";
 
   try {
-    const res = await fetch(`${API_BASE}/merge`, {
+    const res = await fetch(`${API_BASE}/doc-to-pdf`, {
       method: "POST",
       body: fd
     });
 
-    if (!res.ok) throw new Error("Merge failed");
+    if (!res.ok) throw new Error("Conversion failed");
 
     const blob = await res.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "merged.pdf";
+    a.download = "converted.pdf";
     a.click();
   } catch (e) {
     alert(e.message);

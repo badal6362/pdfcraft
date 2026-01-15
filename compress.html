@@ -1,95 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Compress PDF</title>
+  <title>Compress PDF Online – Reduce PDF Size | PDFCraft</title>
+
+  <!-- SEO -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compress PDF files online for free. Reduce PDF size without losing quality using PDFCraft. Secure and fast.">
+  <meta name="keywords" content="compress pdf, reduce pdf size, pdf compressor free">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+
+<header class="site-header">
+  <div class="nav-container">
+    <div class="logo">PDFCraft</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="merge.html">Merge</a>
+      <a href="split.html">Split</a>
+      <a href="doc-to-pdf.html">Convert</a>
+    </nav>
+  </div>
+</header>
+
+<section class="tool-page">
+  <div class="tool-card-advanced">
+
+    <div class="tool-icon">🗜</div>
+
     <h1>Compress PDF</h1>
+    <p>Reduce PDF file size without losing quality</p>
 
-    <p style="font-size:14px;color:#666;">
-      Upload 1 PDF (Max 10 MB)
-    </p>
+    <input type="file" id="pdf" accept="application/pdf">
 
-    <input type="file" id="pdfInput" accept="application/pdf" />
-    <br /><br />
-
-    <label for="level">Compression level:</label>
-    <br />
     <select id="level">
       <option value="low">Low (Best quality)</option>
       <option value="medium" selected>Medium (Recommended)</option>
       <option value="high">High (Smallest size)</option>
     </select>
 
-    <br /><br />
+    <button id="btn" onclick="compressPdf()">Compress PDF</button>
 
-    <button id="compressBtn" onclick="compressPdf()">Compress PDF</button>
+    <div id="status" class="processing-text" style="display:none;">
+      Compressing your PDF…
+    </div>
 
-    <p id="status" style="display:none;">Compressing PDF...</p>
+    <div class="security-note">
+      <span>🔒 Secure</span>
+      <span>⚡ Fast</span>
+      <span>🗑 Files auto-deleted</span>
+    </div>
 
-    <br />
-    <a href="index.html">← Back to Home</a>
+    <a href="index.html" class="back-link">← Back to Home</a>
   </div>
+</section>
 
-  <script>
-    async function compressPdf() {
-      const input = document.getElementById("pdfInput");
-      const level = document.getElementById("level").value;
-      const button = document.getElementById("compressBtn");
-      const status = document.getElementById("status");
+<footer class="site-footer">
+  <div class="footer-bottom">
+    © 2026 PDFCraft • Free Online PDF Tools
+  </div>
+</footer>
 
-      if (input.files.length !== 1) {
-        alert("Please select exactly one PDF");
-        return;
-      }
+<script>
+const API_BASE = "https://pdfcraft-backend-production.up.railway.app";
 
-      const file = input.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        alert("File must be under 10 MB");
-        return;
-      }
+async function compressPdf() {
+  const pdf = document.getElementById("pdf").files[0];
+  const level = document.getElementById("level").value;
+  const status = document.getElementById("status");
+  const btn = document.getElementById("btn");
 
-      const formData = new FormData();
-      formData.append("pdf", file);
-      formData.append("level", level);
+  if (!pdf) {
+    alert("Please select a PDF file");
+    return;
+  }
 
-      button.disabled = true;
-      button.innerText = "Compressing...";
-      status.style.display = "block";
+  const fd = new FormData();
+  fd.append("pdf", pdf);
+  fd.append("level", level);
 
-      try {
-        const response = await fetch("https://pdfcraft-backend-production.up.railway.app/compress", {
-          method: "POST",
-          body: formData
-        });
+  btn.disabled = true;
+  status.style.display = "block";
 
-        if (!response.ok) {
-          throw new Error("Compression failed");
-        }
+  try {
+    const res = await fetch(`${API_BASE}/compress`, {
+      method: "POST",
+      body: fd
+    });
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
+    if (!res.ok) throw new Error("Compression failed");
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "compressed.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "compressed.pdf";
+    a.click();
+  } catch (e) {
+    alert(e.message);
+  }
 
-        URL.revokeObjectURL(url);
+  btn.disabled = false;
+  status.style.display = "none";
+}
+</script>
 
-      } catch (err) {
-        alert(err.message);
-      }
-
-      button.disabled = false;
-      button.innerText = "Compress PDF";
-      status.style.display = "none";
-      input.value = "";
-    }
-  </script>
 </body>
 </html>

@@ -1,99 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Split PDF</title>
+  <title>Split PDF Online – Extract Pages | PDFCraft</title>
+
+  <!-- SEO -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Split PDF files online. Extract specific pages from a PDF securely and for free using PDFCraft.">
+  <meta name="keywords" content="split pdf, extract pdf pages, pdf splitter online">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Split PDF</h1>
 
-    <p style="font-size:14px;color:#666;">
-      Upload 1 PDF and select page range (example: 1-3)
-    </p>
-
-    <input type="file" id="pdfInput" accept="application/pdf" />
-    <br /><br />
-
-    <input
-      type="text"
-      id="range"
-      placeholder="Page range (e.g. 1-3)"
-    />
-    <br /><br />
-
-    <button id="splitBtn" onclick="splitPdf()">Split PDF</button>
-
-    <p id="status" style="display:none;">Splitting PDF...</p>
-
-    <br />
-    <a href="index.html">← Back to Home</a>
+<header class="site-header">
+  <div class="nav-container">
+    <div class="logo">PDFCraft</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="merge.html">Merge</a>
+      <a href="compress.html">Compress</a>
+      <a href="doc-to-pdf.html">Convert</a>
+    </nav>
   </div>
+</header>
 
-  <script>
-    async function splitPdf() {
-      const input = document.getElementById("pdfInput");
-      const range = document.getElementById("range").value.trim();
-      const button = document.getElementById("splitBtn");
-      const status = document.getElementById("status");
+<section class="tool-page">
+  <div class="tool-card-advanced">
 
-      if (input.files.length !== 1) {
-        alert("Please select exactly one PDF");
-        return;
-      }
+    <div class="tool-icon">✂</div>
 
-      if (!/^\d+\-\d+$/.test(range)) {
-        alert("Invalid range format. Use e.g. 1-3");
-        return;
-      }
+    <h1>Split PDF</h1>
+    <p>Extract specific pages from a PDF document</p>
 
-      const file = input.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        alert("File must be under 10 MB");
-        return;
-      }
+    <input type="file" id="pdf" accept="application/pdf">
+    <input type="text" id="range" placeholder="Page range (e.g. 1-3)">
 
-      const formData = new FormData();
-      formData.append("pdf", file);
-      formData.append("range", range);
+    <button id="btn" onclick="splitPdf()">Split PDF</button>
 
-      button.disabled = true;
-      button.innerText = "Splitting...";
-      status.style.display = "block";
+    <div id="status" class="processing-text" style="display:none;">
+      Splitting your PDF…
+    </div>
 
-      try {
-        const response = await fetch("https://pdfcraft-backend-production.up.railway.app/split", {
-          method: "POST",
-          body: formData
-        });
+    <div class="security-note">
+      <span>🔒 Secure</span>
+      <span>⚡ Fast</span>
+      <span>🗑 Files auto-deleted</span>
+    </div>
 
-        if (!response.ok) {
-          const msg = await response.text();
-          throw new Error(msg);
-        }
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+</section>
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
+<footer class="site-footer">
+  <div class="footer-bottom">
+    © 2026 PDFCraft • Free Online PDF Tools
+  </div>
+</footer>
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "split.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+<script>
+const API_BASE = "https://pdfcraft-backend-production.up.railway.app";
 
-        URL.revokeObjectURL(url);
+async function splitPdf() {
+  const pdf = document.getElementById("pdf").files[0];
+  const range = document.getElementById("range").value;
+  const status = document.getElementById("status");
+  const btn = document.getElementById("btn");
 
-      } catch (err) {
-        alert(err.message);
-      }
+  if (!pdf || !range) {
+    alert("Please select a PDF and page range");
+    return;
+  }
 
-      button.disabled = false;
-      button.innerText = "Split PDF";
-      status.style.display = "none";
-      input.value = "";
-      document.getElementById("range").value = "";
-    }
-  </script>
+  const fd = new FormData();
+  fd.append("pdf", pdf);
+  fd.append("range", range);
+
+  btn.disabled = true;
+  status.style.display = "block";
+
+  try {
+    const res = await fetch(`${API_BASE}/split`, {
+      method: "POST",
+      body: fd
+    });
+
+    if (!res.ok) throw new Error("Split failed");
+
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "split.pdf";
+    a.click();
+  } catch (e) {
+    alert(e.message);
+  }
+
+  btn.disabled = false;
+  status.style.display = "none";
+}
+</script>
+
 </body>
 </html>
