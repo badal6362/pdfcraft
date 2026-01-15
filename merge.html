@@ -1,97 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Merge PDF</title>
+  <title>Merge PDF – PDFCraft</title>
+  <meta name="description" content="Merge multiple PDF files into one document online for free.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Merge PDF</h1>
 
-    <p style="font-size: 14px; color: #666;">
-      Select at least 2 PDF files (Max 10 MB per file)
-    </p>
-
-    <input
-      type="file"
-      id="pdfInput"
-      multiple
-      accept="application/pdf"
-    />
-    <br /><br />
-
-    <button id="mergeBtn" onclick="mergePdf()">Merge PDFs</button>
-
-    <p id="status" style="display:none; margin-top:10px;">
-      Processing your PDFs...
-    </p>
-
-    <br />
-    <a href="index.html">← Back to Home</a>
+<header class="site-header">
+  <div class="nav-container">
+    <div class="logo">PDFCraft</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="compress.html">Compress</a>
+      <a href="split.html">Split</a>
+      <a href="doc-to-pdf.html">Convert</a>
+    </nav>
   </div>
+</header>
 
-  <script>
-    async function mergePdf() {
-      const input = document.getElementById("pdfInput");
-      const button = document.getElementById("mergeBtn");
-      const status = document.getElementById("status");
+<section class="tool-hero">
+  <h1>Merge PDF</h1>
+  <p>Combine multiple PDF files into one document</p>
+</section>
 
-      // Basic validation
-      if (input.files.length < 2) {
-        alert("Please select at least 2 PDF files.");
-        return;
-      }
+<section class="tool-wrapper">
+  <div class="tool-box">
+    <input type="file" id="pdfInput" multiple accept="application/pdf">
+    <button onclick="mergePdf()" id="btn">Merge PDFs</button>
+    <div class="tool-status" id="status" style="display:none;">Processing...</div>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+</section>
 
-      // File size validation (10 MB per file)
-      for (const file of input.files) {
-        if (file.size > 10 * 1024 * 1024) {
-          alert(`"${file.name}" exceeds the 10 MB limit.`);
-          return;
-        }
-      }
+<footer class="site-footer">
+  <div class="footer-bottom">© 2026 PDFCraft</div>
+</footer>
 
-      const formData = new FormData();
-      for (const file of input.files) {
-        formData.append("pdfs", file);
-      }
+<script>
+async function mergePdf() {
+  const input = document.getElementById("pdfInput");
+  if (input.files.length < 2) return alert("Select at least 2 PDFs");
 
-      // UI: processing state
-      button.disabled = true;
-      button.innerText = "Processing...";
-      status.style.display = "block";
+  const fd = new FormData();
+  for (const f of input.files) fd.append("pdfs", f);
 
-      try {
-        const response = await fetch("https://pdfcraft-backend-production.up.railway.app/merge", {
-          method: "POST",
-          body: formData
-        });
+  document.getElementById("btn").disabled = true;
+  document.getElementById("status").style.display = "block";
 
-        if (!response.ok) {
-          throw new Error("Merge failed. Please try again.");
-        }
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "merged.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        window.URL.revokeObjectURL(url);
-
-      } catch (error) {
-        alert(error.message);
-      }
-
-      // UI: reset state
-      button.disabled = false;
-      button.innerText = "Merge PDFs";
-      status.style.display = "none";
-      input.value = "";
-    }
-  </script>
+  const res = await fetch("https://YOUR-BACKEND-URL/merge", { method:"POST", body:fd });
+  const blob = await res.blob();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "merged.pdf";
+  a.click();
+}
+</script>
 </body>
 </html>
