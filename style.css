@@ -1,62 +1,77 @@
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  background: #f7f9fc;
-  color: #333;
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+/* HERO */
 .hero {
-  text-align: center;
-  padding: 60px 20px;
   background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
+  padding: 70px 20px;
+  text-align: center;
 }
 
 .hero h1 {
-  font-size: 42px;
+  font-size: 44px;
   margin-bottom: 10px;
 }
 
-.tagline {
+.subtitle {
   font-size: 18px;
-  margin-bottom: 12px;
+  opacity: 0.95;
 }
 
-.trust {
+.badges {
+  margin-top: 20px;
+}
+
+.badges span {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  padding: 8px 14px;
+  margin: 5px;
+  border-radius: 20px;
   font-size: 14px;
-  opacity: 0.9;
 }
 
+/* MAIN */
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: auto;
-  padding: 40px 20px;
+  padding: 50px 20px;
 }
 
 .container h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
+/* TOOLS GRID */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 25px;
 }
 
 .tool-card {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 14px;
   text-decoration: none;
-  color: #333;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  color: inherit;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tool-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
 
 .tool-card h3 {
@@ -64,14 +79,16 @@ body {
   color: #1e40af;
 }
 
+/* FOOTER */
 .footer {
+  background: #0f172a;
+  color: #cbd5f5;
   text-align: center;
   padding: 25px;
-  background: #111827;
-  color: #d1d5db;
 }
 
-.footer-small {
-  font-size: 13px;
+.footer small {
+  display: block;
+  margin-top: 6px;
   opacity: 0.8;
 }
