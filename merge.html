@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Merge PDF Online Free – PDFCraft</title>
+  <title>Merge PDF Online Free – Combine PDF Files | PDFCraft</title>
 
-  <!-- SEO -->
+  <!-- BASIC SEO -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Merge PDF files online for free. Combine multiple PDFs into one document securely with PDFCraft. No signup required.">
-  <meta name="keywords" content="merge pdf, combine pdf online, free pdf merger">
+
+  <meta name="description"
+        content="Merge multiple PDF files into one document online for free. Fast, secure PDF merge tool by PDFCraft. No signup required.">
+
+  <meta name="keywords"
+        content="merge pdf, combine pdf files, pdf merger free, merge pdf online">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://pdfcraft-c6v.pages.dev/merge.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Merge PDF Online – PDFCraft">
+  <meta property="og:description"
+        content="Combine multiple PDF files into one PDF online for free. Secure and fast.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pdfcraft-c6v.pages.dev/merge.html">
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <header class="site-header">
   <div class="nav-container">
     <div class="logo">PDFCraft</div>
@@ -26,21 +42,21 @@
   </div>
 </header>
 
-<!-- TOOL -->
+<!-- ================= TOOL SECTION ================= -->
 <section class="tool-page">
   <div class="tool-card-advanced">
 
-    <div class="tool-icon">📎</div>
+    <div class="tool-icon">📄➕📄</div>
 
     <h1>Merge PDF</h1>
-    <p>Combine multiple PDF files into one secure document</p>
+    <p>Combine multiple PDF files into one document</p>
 
-    <input type="file" id="pdfInput" multiple accept="application/pdf">
+    <input type="file" id="pdfs" accept="application/pdf" multiple>
 
-    <button id="mergeBtn" onclick="mergePdf()">Merge PDFs</button>
+    <button id="btn" onclick="mergePdf()">Merge PDFs</button>
 
     <div id="status" class="processing-text" style="display:none;">
-      Processing your files…
+      Merging your PDFs…
     </div>
 
     <div class="security-note">
@@ -53,51 +69,66 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ================= FOOTER ================= -->
 <footer class="site-footer">
   <div class="footer-bottom">
     © 2026 PDFCraft • Free Online PDF Tools
   </div>
 </footer>
 
+<!-- ================= SCRIPT ================= -->
 <script>
+/* BACKEND BASE URL (NO ENDPOINT HERE) */
 const API_URL = "https://pdfcraft-backend-production.up.railway.app";
 
 async function mergePdf() {
-  const input = document.getElementById("pdfInput");
+  const input = document.getElementById("pdfs");
+  const files = input.files;
   const status = document.getElementById("status");
-  const btn = document.getElementById("mergeBtn");
+  const btn = document.getElementById("btn");
 
-  if (input.files.length < 2) {
+  if (!files || files.length < 2) {
     alert("Please select at least 2 PDF files");
     return;
   }
 
-  const fd = new FormData();
-  for (const f of input.files) fd.append("pdfs", f);
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("pdfs", file);
+  }
 
   btn.disabled = true;
   status.style.display = "block";
 
   try {
-    const res = await fetch(`${API_BASE}/merge`, {
+    const response = await fetch(`${API_URL}/merge`, {
       method: "POST",
-      body: fd
+      body: formData
     });
 
-    if (!res.ok) throw new Error("Merge failed");
+    if (!response.ok) {
+      throw new Error("Merge failed");
+    }
 
-    const blob = await res.blob();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = url;
     a.download = "merged.pdf";
+    document.body.appendChild(a);
     a.click();
-  } catch (e) {
-    alert(e.message);
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    alert(error.message);
   }
 
   btn.disabled = false;
   status.style.display = "none";
+  input.value = "";
 }
 </script>
 
