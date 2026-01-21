@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>DOC to PDF Converter – Free & Secure | PDFCraft</title>
+  <title>Convert Word to PDF Online – DOC to PDF | PDFCraft</title>
 
-  <!-- SEO -->
+  <!-- BASIC SEO -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Convert Word documents (DOC, DOCX) to PDF online for free. Secure and fast DOC to PDF converter.">
-  <meta name="keywords" content="doc to pdf, word to pdf, convert docx to pdf">
+
+  <meta name="description"
+        content="Convert Word documents (DOC, DOCX) to PDF online for free. Secure, fast document to PDF converter by PDFCraft.">
+
+  <meta name="keywords"
+        content="doc to pdf, docx to pdf, word to pdf online, convert document to pdf">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://pdfcraft-c6v.pages.dev/doc-to-pdf.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Convert Word to PDF – PDFCraft">
+  <meta property="og:description"
+        content="Convert DOC and DOCX files to PDF online for free. Secure and fast.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pdfcraft-c6v.pages.dev/doc-to-pdf.html">
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="site-header">
   <div class="nav-container">
     <div class="logo">PDFCraft</div>
@@ -25,20 +42,25 @@
   </div>
 </header>
 
+<!-- ================= TOOL SECTION ================= -->
 <section class="tool-page">
   <div class="tool-card-advanced">
 
-    <div class="tool-icon">📄</div>
+    <div class="tool-icon">📄➡️📕</div>
 
-    <h1>DOC to PDF</h1>
-    <p>Convert Word documents into PDF format</p>
+    <h1>Convert Word to PDF</h1>
+    <p>Convert DOC or DOCX files to PDF format</p>
 
-    <input type="file" id="doc" accept=".doc,.docx">
+    <input
+      type="file"
+      id="doc"
+      accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    >
 
     <button id="btn" onclick="convertDoc()">Convert to PDF</button>
 
     <div id="status" class="processing-text" style="display:none;">
-      Converting document…
+      Converting your document…
     </div>
 
     <div class="security-note">
@@ -47,54 +69,72 @@
       <span>🗑 Files auto-deleted</span>
     </div>
 
+    <p class="note-text">
+      Supported formats: DOC, DOCX
+    </p>
+
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 </section>
 
+<!-- ================= FOOTER ================= -->
 <footer class="site-footer">
   <div class="footer-bottom">
     © 2026 PDFCraft • Free Online PDF Tools
   </div>
 </footer>
 
+<!-- ================= SCRIPT ================= -->
 <script>
+/* BACKEND BASE URL */
 const API_URL = "https://pdfcraft-backend-production.up.railway.app";
 
 async function convertDoc() {
-  const doc = document.getElementById("doc").files[0];
+  const docInput = document.getElementById("doc");
+  const file = docInput.files[0];
   const status = document.getElementById("status");
   const btn = document.getElementById("btn");
 
-  if (!doc) {
-    alert("Please select a DOC or DOCX file");
+  if (!file) {
+    alert("Please select a Word document (DOC or DOCX)");
     return;
   }
 
-  const fd = new FormData();
-  fd.append("doc", doc);
+  const formData = new FormData();
+  formData.append("doc", file);
 
   btn.disabled = true;
   status.style.display = "block";
 
   try {
-    const res = await fetch(`${API_BASE}/doc-to-pdf`, {
+    const response = await fetch(`${API_URL}/doc-to-pdf`, {
       method: "POST",
-      body: fd
+      body: formData
     });
 
-    if (!res.ok) throw new Error("Conversion failed");
+    if (!response.ok) {
+      throw new Error("Conversion failed");
+    }
 
-    const blob = await res.blob();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = url;
     a.download = "converted.pdf";
+    document.body.appendChild(a);
     a.click();
-  } catch (e) {
-    alert(e.message);
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    alert("Conversion failed. Please try again later.");
   }
 
   btn.disabled = false;
   status.style.display = "none";
+  docInput.value = "";
 }
 </script>
 
