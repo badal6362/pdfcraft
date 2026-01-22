@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pdfcraft-c6v.pages.dev/sitemap.xml
+Sitemap: https://badal6362.github.io/pdfcraft/sitemap.xml
